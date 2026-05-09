@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse All Sellers - Kasify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmxkJI2kHAebKMg3lxINXWJiSJFz31P2o",
+            authDomain: "kasify-directory.firebaseapp.com",
+            projectId: "kasify-directory",
+            storageBucket: "kasify-directory.firebasestorage.app",
+            messagingSenderId: "546416044281",
+            appId: "1:546416044281:web:a0aa4db346d94237931a28"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.getDocs = getDocs;
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+        }
+
+        .kasify-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #f59e0b 100%);
+        }
+
+        .seller-card-clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .seller-card-clickable:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
+                <div class="kasify-gradient w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                    K
+                </div>
+                <span class="text-xl font-bold text-gray-900 hidden sm:inline">Kasify</span>
+            </a>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-gray-600 hover:text-emerald-600 transition font-medium">Home</a>
+                <a href="#list-business" class="bg-emerald-600 text-white px-4 py-2 rounded-full hover:bg-emerald-700 transition">List Business</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="kasify-gradient text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Explore All Sellers</h1>
+            <p class="text-white text-opacity-90 text-lg max-w-2xl mx-auto">
+                Discover local township businesses in North West Province. Each seller has their own story and expertise.
+            </p>
+            <div class="mt-8 flex gap-4 justify-center">
+                <input type="text" id="search-input" placeholder="Search sellers..." class="px-6 py-3 rounded-full text-gray-900 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <select id="category-filter" class="px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <option value="">All Categories</option>
+                    <option value="Web & Tech">Web & Tech</option>
+                    <option value="Beauty & Salon">Beauty & Salon</option>
+                    <option value="Food & Drinks">Food & Drinks</option>
+                    <option value="Services">Services</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Construction">Construction</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">Loading sellers...</p>
+    </div>
+
+    <!-- Sellers Grid -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div id="sellers-grid" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Sellers will be rendered here -->
+        </div>
+    </section>
+
+    <!-- No Results -->
+    <div id="no-results" class="text-center py-20 hidden">
+        <div class="text-6xl mb-4">🔍</div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">No sellers found</h2>
+        <p class="text-gray-600">Try adjusting your search or filter criteria.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2026 Kasify. Supporting local, township businesses. Made with ❤️ for North West.</p>
+        </div>
+    </footer>
+
+    <script>
+        let allSellers = [];
+        const db = window.db;
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const sellersGrid = document.getElementById('sellers-grid');
+        const loading = document.getElementById('loading');
+        const noResults = document.getElementById('no-results');
+
+        // Load all sellers from Firebase
+        async function loadAllSellers() {
+            try {
+                const querySnapshot = await window.getDocs(window.collection(db, 'sellers'));
+                allSellers = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                loading.classList.add('hidden');
+                renderSellers(allSellers);
+            } catch (error) {
+                console.error('Error loading sellers:', error);
+                loading.innerHTML = '<p class="text-red-600">Error loading sellers. Please refresh.</p>';
+            }
+        }
+
+        // Render sellers grid
+        function renderSellers(sellers) {
+            if (sellers.length === 0) {
+                sellersGrid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            sellersGrid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            sellersGrid.innerHTML = sellers.map((seller, index) => `
+                <div class="seller-card-clickable bg-white rounded-2xl overflow-hidden shadow-sm fade-in" style="animation-delay: ${index * 0.1}s" onclick="window.location.href='seller-profile.html?id=${seller.id}'">
+                    <div class="h-48 bg-gradient-to-br from-emerald-400 to-orange-400 flex items-center justify-center text-6xl">
+                        ${seller.coverPhoto ? `<img src="${seller.coverPhoto}" alt="${seller.businessName}" class="w-full h-full object-cover">` : '🏪'}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-2">
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">${seller.businessName}</h3>
+                                <p class="text-sm text-gray-600">${seller.category}</p>
+                            </div>
+                            ${seller.isVerified ? '<span class="text-emerald-600 text-lg">✅</span>' : ''}
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${seller.tagline || 'Local township business'}</p>
+                        <p class="text-sm text-gray-500 mb-4">📍 ${seller.location}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <span class="text-yellow-400">⭐</span>
+                                <span class="font-semibold text-gray-900">${(seller.rating || 0).toFixed(1)}</span>
+                            </div>
+                            <button class="text-emerald-600 font-bold hover:text-emerald-700 transition">View Profile →</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter sellers
+        function filterSellers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const category = categoryFilter.value;
+
+            const filtered = allSellers.filter(seller => {
+                const matchesSearch = seller.businessName.toLowerCase().includes(searchTerm) ||
+                                     seller.tagline?.toLowerCase().includes(searchTerm) ||
+                                     seller.location.toLowerCase().includes(searchTerm);
+                const matchesCategory = !category || seller.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderSellers(filtered);
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', filterSellers);
+        categoryFilter.addEventListener('change', filterSellers);
+
+        // Load sellers on page load
+        loadAllSellers();
+    </script>
+</body>
+</html>

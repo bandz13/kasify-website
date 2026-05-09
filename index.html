@@ -194,12 +194,12 @@
     <!-- Navigation / Header -->
     <header class="sticky top-0 z-50 bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <a href="index.html" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
                 <div class="kasify-gradient w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                     K
                 </div>
                 <span class="text-xl font-bold text-gray-900 hidden sm:inline">Kasify</span>
-            </div>
+            </a>
             <nav class="hidden md:flex gap-8">
                 <a href="#categories" class="text-gray-600 hover:text-emerald-600 transition">Categories</a>
                 <a href="#sellers" class="text-gray-600 hover:text-emerald-600 transition">Sellers</a>
@@ -548,8 +548,8 @@
                         <div class="absolute bottom-2 left-2 text-orange-300 text-lg">🔥</div>
                     </div>
                     
-                    <!-- Seller Card 4 -->
-                    <div class="seller-card flex-shrink-0 w-72">
+                    <!-- Seller Card 4 - Hidden -->
+                    <div class="seller-card flex-shrink-0 w-72 hidden">
                         <div class="w-full h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-6xl">
                             🔧
                         </div>
@@ -568,8 +568,8 @@
                         </div>
                     </div>
                     
-                    <!-- Seller Card 5 -->
-                    <div class="seller-card flex-shrink-0 w-72">
+                    <!-- Seller Card 5 - Hidden -->
+                    <div class="seller-card flex-shrink-0 w-72 hidden">
                         <div class="w-full h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-6xl">
                             🏗️
                         </div>
@@ -591,9 +591,9 @@
             </div>
             
             <div class="text-center mt-8">
-                <button class="bg-emerald-600 text-white font-bold px-8 py-3 rounded-full hover:bg-emerald-700 transition">
+                <a href="sellers.html" class="bg-emerald-600 text-white font-bold px-8 py-3 rounded-full hover:bg-emerald-700 transition inline-block">
                     View All Sellers →
-                </button>
+                </a>
             </div>
         </div>
     </section>
