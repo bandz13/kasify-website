@@ -10,36 +10,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "your-app-id"
+            apiKey: "AIzaSyCmxkJI2kHAebKMg3lxINXWJiSJFz31P2o",
+            authDomain: "kasify-directory.firebaseapp.com",
+            projectId: "kasify-directory",
+            storageBucket: "kasify-directory.firebasestorage.app",
+            messagingSenderId: "546416044281",
+            appId: "1:546416044281:web:a0aa4db346d94237931a28"
         };
-
-        // Check if config is still placeholder
-        if (firebaseConfig.apiKey === "your-api-key") {
-            console.error("Firebase config not set! Please replace the placeholder values in seller-profile.html with your actual Firebase project config.");
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').innerHTML = `
-                <div class="text-center max-w-md px-6">
-                    <div class="text-6xl mb-4">⚙️</div>
-                    <h2 class="text-xl font-bold text-gray-900 mb-2">Firebase Not Configured</h2>
-                    <p class="text-gray-600 mb-6">Please set up your Firebase project and update the configuration in this file.</p>
-                    <a href="README.md" target="_blank" class="bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition mr-4">
-                        View Setup Guide
-                    </a>
-                    <a href="index.html" class="bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-700 transition">
-                        Back to Home
-                    </a>
-                </div>
-            `;
-            document.getElementById('error').classList.remove('hidden');
-            return;
-        }
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);

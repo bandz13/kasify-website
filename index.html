@@ -10,20 +10,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "your-app-id"
+            apiKey: "AIzaSyCmxkJI2kHAebKMg3lxINXWJiSJFz31P2o",
+            authDomain: "kasify-directory.firebaseapp.com",
+            projectId: "kasify-directory",
+            storageBucket: "kasify-directory.firebasestorage.app",
+            messagingSenderId: "546416044281",
+            appId: "1:546416044281:web:a0aa4db346d94237931a28"
         };
-
-        // Check if config is still placeholder
-        if (firebaseConfig.apiKey === "your-api-key") {
-            console.warn("Firebase config not set. Some features may not work. Please update the config in index.html");
-        }
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
