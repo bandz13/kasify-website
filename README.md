@@ -48,6 +48,116 @@ Optimized for mobile devices with horizontal scrolling business cards.
 
 - **HTML5**: Semantic markup and structure
 - **Tailwind CSS**: Utility-first CSS framework via CDN
+- **Firebase**: Backend database for seller profiles and data
+- **JavaScript (ES6+)**: Dynamic profile pages and form handling
+
+## 🔥 Firebase Setup
+
+Kasify uses Firebase Firestore as the backend database for seller profiles, products, reviews, and deals.
+
+### 1. Create Firebase Project
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project called "kasify-website"
+3. Enable Firestore Database
+4. Set up Authentication (optional, for admin features)
+
+### 2. Database Structure
+
+#### Sellers Collection
+```javascript
+{
+  id: "mpho-web-studio",
+  businessName: "Mpho Web Studio",
+  tagline: "Building digital dreams for township businesses",
+  category: "Web & Tech",
+  location: "Mahikeng",
+  brandColour: "#3b82f6", // Blue theme
+  coverPhoto: "https://example.com/cover.jpg",
+  logo: "https://example.com/logo.jpg",
+  about: "We create modern websites for local businesses...",
+  hours: "Mon-Fri: 8AM-6PM\nSat: 9AM-2PM\nSun: Closed",
+  isVerified: true,
+  rating: 4.8
+}
+```
+
+#### Products Collection
+```javascript
+{
+  id: "website-basic",
+  sellerId: "mpho-web-studio",
+  name: "Basic Website Package",
+  price: 1500,
+  photo: "https://example.com/website.jpg",
+  description: "5-page responsive website with contact form",
+  whatsappLink: "https://wa.me/27821234567?text=Hi, interested in Basic Website Package"
+}
+```
+
+#### Reviews Collection
+```javascript
+{
+  id: "review-1",
+  sellerId: "mpho-web-studio",
+  reviewerName: "Thabo M.",
+  rating: 5,
+  comment: "Excellent work! My business website looks professional.",
+  date: { seconds: 1640995200, nanoseconds: 0 }
+}
+```
+
+#### Deals Collection
+```javascript
+{
+  id: "deal-1",
+  sellerId: "mpho-web-studio",
+  title: "20% Off New Websites",
+  description: "Get 20% discount on all new website packages this month!",
+  discount: "20% OFF"
+}
+```
+
+### 3. Deploy Security Rules
+
+Upload the `firestore.rules` file to your Firebase project:
+
+1. In Firebase Console, go to **Firestore Database** → **Rules**
+2. Copy and paste the contents of `firestore.rules`
+3. Click **Publish**
+
+The rules allow:
+- **Public Read Access**: Anyone can view seller profiles and data
+- **Authenticated Writes**: Only logged-in users can add/edit data
+- **Seller Profile Edits**: Sellers can only edit their own profiles
+
+### 4. Update Firebase Config
+
+In both `index.html` and `seller-profile.html`, replace the placeholder config:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "your-actual-api-key",
+  authDomain: "kasify-website.firebaseapp.com",
+  projectId: "kasify-website",
+  storageBucket: "kasify-website.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-actual-app-id"
+};
+```
+
+### 4. Add Sample Data
+
+Use Firebase Console or a script to add sample seller data matching the IDs used in the homepage links.
+
+## 📊 Features
+
+- **Seller Profiles**: Full mini-website experience for each business
+- **Product Catalogs**: Showcase services with photos and pricing
+- **Customer Reviews**: Build trust with verified reviews
+- **Special Deals**: Highlight promotions and discounts
+- **WhatsApp Integration**: Direct contact for orders and inquiries
+- **Mobile Optimized**: Fast loading on township mobile networks
 - **Google Fonts**: Inter font family for modern typography
 - **Responsive Design**: Mobile-first approach with breakpoints
 - **CSS Animations**: Subtle hover effects and transitions

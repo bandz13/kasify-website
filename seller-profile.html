@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile - Kasify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Check if config is still placeholder
+        if (firebaseConfig.apiKey === "your-api-key") {
+            console.error("Firebase config not set! Please replace the placeholder values in seller-profile.html with your actual Firebase project config.");
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').innerHTML = `
+                <div class="text-center max-w-md px-6">
+                    <div class="text-6xl mb-4">⚙️</div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">Firebase Not Configured</h2>
+                    <p class="text-gray-600 mb-6">Please set up your Firebase project and update the configuration in this file.</p>
+                    <a href="README.md" target="_blank" class="bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition mr-4">
+                        View Setup Guide
+                    </a>
+                    <a href="index.html" class="bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-700 transition">
+                        Back to Home
+                    </a>
+                </div>
+            `;
+            document.getElementById('error').classList.remove('hidden');
+            return;
+        }
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make db available globally
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+        }
+
+        .whatsapp-btn:hover {
+            background: linear-gradient(135deg, #128c7e 0%, #075e54 100%);
+        }
+
+        .star-rating {
+            color: #fbbf24;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .deal-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Loading State -->
+    <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading seller profile...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="fixed inset-0 bg-white flex items-center justify-center z-50 hidden">
+        <div class="text-center max-w-md px-6">
+            <div class="text-6xl mb-4">😔</div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Seller Not Found</h2>
+            <p class="text-gray-600 mb-6">This seller profile doesn't exist or has been removed.</p>
+            <a href="index.html" class="bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition">
+                Back to Kasify
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content" class="hidden">
+        <!-- Cover Photo Section -->
+        <div id="cover-section" class="relative h-64 md:h-80 bg-gradient-to-r from-emerald-600 to-orange-500">
+            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+            <div class="relative h-full flex items-end">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8">
+                    <div class="flex items-end gap-6">
+                        <div id="logo-container" class="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center text-3xl font-bold text-gray-900">
+                            <!-- Logo will be inserted here -->
+                        </div>
+                        <div class="text-white">
+                            <h1 id="business-name" class="text-2xl md:text-3xl font-bold mb-1">Business Name</h1>
+                            <p id="tagline" class="text-white text-opacity-90 mb-2">Tagline here</p>
+                            <div class="flex items-center gap-4 text-sm">
+                                <span id="category" class="bg-white bg-opacity-20 px-3 py-1 rounded-full">Category</span>
+                                <span id="location" class="flex items-center gap-1">
+                                    📍 Location
+                                </span>
+                                <div id="rating" class="flex items-center gap-1">
+                                    ⭐ 0.0 (0 reviews)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex gap-8 overflow-x-auto">
+                    <a href="#about" class="nav-link py-4 px-2 text-gray-600 hover:text-emerald-600 border-b-2 border-transparent hover:border-emerald-600 transition">About</a>
+                    <a href="#products" class="nav-link py-4 px-2 text-gray-600 hover:text-emerald-600 border-b-2 border-transparent hover:border-emerald-600 transition">Products</a>
+                    <a href="#reviews" class="nav-link py-4 px-2 text-gray-600 hover:text-emerald-600 border-b-2 border-transparent hover:border-emerald-600 transition">Reviews</a>
+                    <a href="#deals" class="nav-link py-4 px-2 text-gray-600 hover:text-emerald-600 border-b-2 border-transparent hover:border-emerald-600 transition">Deals</a>
+                    <a href="#contact" class="nav-link py-4 px-2 text-gray-600 hover:text-emerald-600 border-b-2 border-transparent hover:border-emerald-600 transition">Contact</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- About Section -->
+        <section id="about" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid gap-12 lg:grid-cols-2">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">About Us</h2>
+                        <div id="about-content" class="text-gray-600 leading-7 space-y-4">
+                            <!-- About content will be inserted here -->
+                        </div>
+                        <div class="mt-8">
+                            <h3 class="font-bold text-gray-900 mb-3">Business Hours</h3>
+                            <div id="hours" class="text-gray-600 space-y-1">
+                                <!-- Hours will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-2xl p-6">
+                            <h3 class="font-bold text-gray-900 mb-4">Quick Info</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Category:</span>
+                                    <span id="category-info" class="font-medium">Category</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Location:</span>
+                                    <span id="location-info" class="font-medium">Location</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Verified:</span>
+                                    <span id="verified" class="font-medium text-emerald-600">✅ Yes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-emerald-50 rounded-2xl p-6">
+                            <h3 class="font-bold text-gray-900 mb-4">Get in Touch</h3>
+                            <button id="whatsapp-btn" class="w-full whatsapp-btn text-white py-3 rounded-xl font-bold hover:shadow-lg transition">
+                                Message on WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Our Products</h2>
+                <div id="products-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <!-- Products will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900">Customer Reviews</h2>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-900" id="avg-rating">0.0</div>
+                        <div class="star-rating text-lg" id="stars">★★★★★</div>
+                        <div class="text-sm text-gray-600" id="review-count">0 reviews</div>
+                    </div>
+                </div>
+                <div id="reviews-list" class="space-y-6">
+                    <!-- Reviews will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Deals Section -->
+        <section id="deals" class="py-16 bg-gradient-to-r from-orange-400 to-orange-600 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold mb-8">Special Deals</h2>
+                <div id="deals-grid" class="grid gap-6 md:grid-cols-2">
+                    <!-- Deals will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-gray-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold mb-4">Ready to Connect?</h2>
+                <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                    Get in touch with us for inquiries, orders, or just to say hello. We're here to serve our community.
+                </p>
+                <button id="whatsapp-btn-bottom" class="whatsapp-btn text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-xl transition transform hover:scale-105">
+                    Start Conversation on WhatsApp
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Get seller ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sellerId = urlParams.get('id');
+
+        if (!sellerId) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            return;
+        }
+
+        // Firebase references
+        const db = window.db;
+        let sellerData = null;
+
+        // Load seller data
+        async function loadSellerData() {
+            try {
+                const sellerDoc = await window.getDoc(window.doc(db, 'sellers', sellerId));
+                if (!sellerDoc.exists()) {
+                    throw new Error('Seller not found');
+                }
+                sellerData = sellerDoc.data();
+                return sellerData;
+            } catch (error) {
+                console.error('Error loading seller:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const q = window.query(window.collection(db, 'products'), window.where('sellerId', '==', sellerId));
+                const querySnapshot = await window.getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error('Error loading products:', error);
+                return [];
+            }
+        }
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const q = window.query(window.collection(db, 'reviews'), window.where('sellerId', '==', sellerId));
+                const querySnapshot = await window.getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                return [];
+            }
+        }
+
+        // Load deals
+        async function loadDeals() {
+            try {
+                const q = window.query(window.collection(db, 'deals'), window.where('sellerId', '==', sellerId));
+                const querySnapshot = await window.getDocs(q);
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error('Error loading deals:', error);
+                return [];
+            }
+        }
+
+        // Render seller profile
+        function renderSellerProfile(seller) {
+            // Cover photo
+            if (seller.coverPhoto) {
+                document.getElementById('cover-section').style.backgroundImage = `url(${seller.coverPhoto})`;
+                document.getElementById('cover-section').style.backgroundSize = 'cover';
+                document.getElementById('cover-section').style.backgroundPosition = 'center';
+            }
+
+            // Logo
+            if (seller.logo) {
+                document.getElementById('logo-container').innerHTML = `<img src="${seller.logo}" alt="${seller.businessName} logo" class="w-full h-full object-cover rounded-2xl">`;
+            } else {
+                document.getElementById('logo-container').textContent = seller.businessName.charAt(0);
+            }
+
+            // Basic info
+            document.getElementById('business-name').textContent = seller.businessName;
+            document.getElementById('tagline').textContent = seller.tagline || '';
+            document.getElementById('category').textContent = seller.category;
+            document.getElementById('location').textContent = `📍 ${seller.location}`;
+            document.getElementById('category-info').textContent = seller.category;
+            document.getElementById('location-info').textContent = seller.location;
+            document.getElementById('verified').innerHTML = seller.isVerified ? '✅ Verified' : '⏳ Pending';
+
+            // About
+            if (seller.about) {
+                document.getElementById('about-content').innerHTML = seller.about.replace(/\n/g, '<br>');
+            }
+
+            // Hours
+            if (seller.hours) {
+                document.getElementById('hours').innerHTML = seller.hours.replace(/\n/g, '<br>');
+            }
+
+            // WhatsApp buttons
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            const whatsappBtnBottom = document.getElementById('whatsapp-btn-bottom');
+            if (seller.whatsappLink) {
+                whatsappBtn.onclick = () => window.open(seller.whatsappLink, '_blank');
+                whatsappBtnBottom.onclick = () => window.open(seller.whatsappLink, '_blank');
+            } else {
+                whatsappBtn.disabled = true;
+                whatsappBtnBottom.disabled = true;
+                whatsappBtn.textContent = 'Contact Info Not Available';
+                whatsappBtnBottom.textContent = 'Contact Info Not Available';
+            }
+        }
+
+        // Render products
+        function renderProducts(products) {
+            const grid = document.getElementById('products-grid');
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500">No products listed yet.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = products.map(product => `
+                <div class="product-card bg-white rounded-2xl shadow-sm overflow-hidden transition transform hover:shadow-lg">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        ${product.photo ? `<img src="${product.photo}" alt="${product.name}" class="w-full h-full object-cover">` : '<span class="text-4xl text-gray-400">📦</span>'}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">${product.name}</h3>
+                        <p class="text-emerald-600 font-bold text-xl mb-3">R${product.price}</p>
+                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <a href="${product.whatsappLink || '#'}" target="_blank" class="w-full whatsapp-btn text-white py-2 rounded-lg font-medium text-center block hover:shadow-md transition">
+                            Order on WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render reviews
+        function renderReviews(reviews) {
+            const list = document.getElementById('reviews-list');
+            const avgRating = document.getElementById('avg-rating');
+            const stars = document.getElementById('stars');
+            const reviewCount = document.getElementById('review-count');
+            const rating = document.getElementById('rating');
+
+            if (reviews.length === 0) {
+                list.innerHTML = '<div class="text-center py-12"><p class="text-gray-500">No reviews yet. Be the first to leave a review!</p></div>';
+                avgRating.textContent = '0.0';
+                stars.textContent = '☆☆☆☆☆';
+                reviewCount.textContent = '0 reviews';
+                rating.innerHTML = '⭐ 0.0 (0 reviews)';
+                return;
+            }
+
+            const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+            avgRating.textContent = avg.toFixed(1);
+            stars.textContent = '★'.repeat(Math.floor(avg)) + '☆'.repeat(5 - Math.floor(avg));
+            reviewCount.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+            rating.innerHTML = `⭐ ${avg.toFixed(1)} (${reviews.length} review${reviews.length !== 1 ? 's' : ''})`;
+
+            list.innerHTML = reviews.map(review => `
+                <div class="bg-gray-50 rounded-2xl p-6">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h4 class="font-bold text-gray-900">${review.reviewerName}</h4>
+                            <div class="flex items-center gap-2">
+                                <div class="star-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                                <span class="text-sm text-gray-500">${new Date(review.date.seconds * 1000).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">${review.comment}</p>
+                </div>
+            `).join('');
+        }
+
+        // Render deals
+        function renderDeals(deals) {
+            const grid = document.getElementById('deals-grid');
+            if (deals.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-white">No special deals available right now.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = deals.map(deal => `
+                <div class="deal-card rounded-2xl p-6 text-white">
+                    <h3 class="font-bold text-xl mb-2">${deal.title}</h3>
+                    <p class="mb-4 opacity-90">${deal.description}</p>
+                    <div class="text-2xl font-bold">${deal.discount}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize page
+        async function init() {
+            const seller = await loadSellerData();
+            if (!seller) return;
+
+            const [products, reviews, deals] = await Promise.all([
+                loadProducts(),
+                loadReviews(),
+                loadDeals()
+            ]);
+
+            renderSellerProfile(seller);
+            renderProducts(products);
+            renderReviews(reviews);
+            renderDeals(deals);
+
+            // Hide loading, show content
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+
+            // Add fade-in animations
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Smooth scrolling for navigation
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-link')) {
+                e.preventDefault();
+                const target = document.querySelector(e.target.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

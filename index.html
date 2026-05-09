@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kasify - Township Business Directory</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Check if config is still placeholder
+        if (firebaseConfig.apiKey === "your-api-key") {
+            console.warn("Firebase config not set. Some features may not work. Please update the config in index.html");
+        }
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make db available globally for other scripts
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -345,9 +378,9 @@
                                 <button class="flex-1 whatsapp-btn text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition transform hover:scale-105">
                                     💬 Get Quote
                                 </button>
-                                <button class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition transform hover:scale-105">
-                                    🌐 View Portfolio
-                                </button>
+                                <a href="seller-profile.html?id=mpho-web-studio" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition transform hover:scale-105 text-center">
+                                    👀 View Profile
+                                </a>
                             </div>
                             
                             <!-- Location Badge -->
@@ -424,9 +457,9 @@
                                 <button class="flex-1 whatsapp-btn text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition transform hover:scale-105">
                                     📅 Book Now
                                 </button>
-                                <button class="flex-1 bg-pink-500 text-white py-2 rounded-lg font-medium text-sm hover:bg-pink-600 transition transform hover:scale-105">
-                                    💄 View Gallery
-                                </button>
+                                <a href="seller-profile.html?id=beauty-by-lindi" class="flex-1 bg-pink-500 text-white py-2 rounded-lg font-medium text-sm hover:bg-pink-600 transition transform hover:scale-105 text-center">
+                                    💄 View Profile
+                                </a>
                             </div>
                             
                             <!-- Location -->
@@ -495,9 +528,9 @@
                                 <button class="flex-1 whatsapp-btn text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition transform hover:scale-105">
                                     📞 Order Now
                                 </button>
-                                <button class="flex-1 bg-orange-500 text-white py-2 rounded-lg font-medium text-sm hover:bg-orange-600 transition transform hover:scale-105">
-                                    📋 View Menu
-                                </button>
+                                <a href="seller-profile.html?id=fresh-bites-cafe" class="flex-1 bg-orange-500 text-white py-2 rounded-lg font-medium text-sm hover:bg-orange-600 transition transform hover:scale-105 text-center">
+                                    📋 View Profile
+                                </a>
                             </div>
                             
                             <!-- Location & Rating -->
@@ -533,9 +566,9 @@
                                 <button class="flex-1 whatsapp-btn text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition">
                                     WhatsApp
                                 </button>
-                                <button class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition">
-                                    View
-                                </button>
+                                <a href="seller-profile.html?id=mphos-plumbing" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition text-center">
+                                    View Profile
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -553,9 +586,9 @@
                                 <button class="flex-1 whatsapp-btn text-white py-2 rounded-lg font-medium text-sm hover:shadow-md transition">
                                     WhatsApp
                                 </button>
-                                <button class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition">
-                                    View
-                                </button>
+                                <a href="seller-profile.html?id=kk-hardware-store" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-medium text-sm hover:bg-gray-300 transition text-center">
+                                    View Profile
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -613,18 +646,122 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="kasify-gradient py-12 sm:py-16 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-3xl font-bold mb-4">
-                Are You a Business Owner?
-            </h2>
-            <p class="text-white text-opacity-90 mb-6 max-w-2xl mx-auto">
-                List your business for free and reach thousands of customers in North West Province
-            </p>
-            <button class="bg-white text-emerald-700 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">
-                List Your Business
-            </button>
+    <!-- Seller Submission Section -->
+    <section id="list-business" class="py-16 sm:py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                    List Your Business on Kasify
+                </h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    Business owners can submit a listing that attracts customers with the right look and brand feeling.
+                    Share your service, location, and the emotion behind your business so customers get the right first impression.
+                </p>
+            </div>
+
+            <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
+                <div class="space-y-6">
+                    <div class="rounded-3xl bg-white border border-gray-200 p-8 shadow-sm">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Why this form matters</h3>
+                        <p class="text-gray-600 leading-7">
+                            The more you describe your business, the better your listing looks to customers.
+                            Include your category, location, WhatsApp contact and the feeling behind your brand.
+                        </p>
+                        <ul class="mt-6 space-y-3 text-gray-600 list-disc list-inside">
+                            <li>Show what makes your business feel modern, friendly, techie, or creative.</li>
+                            <li>Give customers a strong first impression before they message you.</li>
+                            <li>Use the final custom answer to describe your own brand style.</li>
+                        </ul>
+                    </div>
+                    <div class="rounded-3xl bg-emerald-700 text-white p-8 shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">Quick tip</h3>
+                        <p class="leading-7">
+                            If your listing is about websites, say it feels techie, modern, and code-based. If you sell beauty, choose warm, friendly, or community-focused.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-3xl bg-white border border-gray-200 p-8 shadow-sm">
+                    <form id="seller-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="business-name">Business Name</label>
+                            <input id="business-name" type="text" placeholder="e.g. Mpho Web Studio" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="business-category">Category</label>
+                            <select id="business-category" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none">
+                                <option value="">Choose a category</option>
+                                <option>Web & Tech</option>
+                                <option>Beauty & Salon</option>
+                                <option>Food & Drinks</option>
+                                <option>Services</option>
+                                <option>Retail</option>
+                                <option>Construction</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="business-location">Location</label>
+                            <input id="business-location" type="text" placeholder="e.g. Mahikeng, Rustenburg" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="business-contact">WhatsApp or Phone</label>
+                            <input id="business-contact" type="text" placeholder="e.g. +27 76 123 4567" class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="business-description">What do you sell? Describe your service</label>
+                            <textarea id="business-description" rows="4" placeholder="Write a short description for customers." class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <p class="block text-sm font-semibold text-gray-800 mb-4">What’s the feeling behind your brand?</p>
+                            <div class="space-y-3 text-gray-700">
+                                <label class="flex gap-3 items-center">
+                                    <input type="radio" name="brand-feel" value="Techie and code-based" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                    <span>Techie and code-based</span>
+                                </label>
+                                <label class="flex gap-3 items-center">
+                                    <input type="radio" name="brand-feel" value="Friendly and community-focused" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                    <span>Friendly and community-focused</span>
+                                </label>
+                                <label class="flex gap-3 items-center">
+                                    <input type="radio" name="brand-feel" value="Modern and premium" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                    <span>Modern and premium</span>
+                                </label>
+                                <label class="flex gap-3 items-center">
+                                    <input type="radio" name="brand-feel" value="Creative and bold" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                    <span>Creative and bold</span>
+                                </label>
+                                <label class="flex gap-3 items-center">
+                                    <input type="radio" name="brand-feel" value="custom" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500">
+                                    <span>Custom feeling — describe your own brand</span>
+                                </label>
+                            </div>
+                            <div id="brand-custom-group" class="mt-4 hidden">
+                                <label class="block text-sm font-semibold text-gray-800 mb-2" for="brand-feel-custom">Custom brand feeling</label>
+                                <textarea id="brand-feel-custom" rows="3" placeholder="Describe the exact feeling behind your brand." class="w-full rounded-2xl border border-gray-300 px-4 py-3 text-gray-900 focus:border-emerald-500 focus:ring-emerald-200 outline-none"></textarea>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <button id="prepare-message" type="button" class="bg-emerald-700 text-white font-bold px-6 py-3 rounded-full hover:bg-emerald-800 transition">
+                                Prepare Message
+                            </button>
+                            <button id="copy-message" type="button" class="bg-gray-100 text-gray-900 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition" disabled>
+                                Copy Text
+                            </button>
+                            <button id="open-whatsapp" type="button" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-full hover:bg-blue-700 transition" disabled>
+                                Open WhatsApp
+                            </button>
+                        </div>
+                        <p id="message-note" class="mt-3 text-sm text-gray-500 hidden">
+                            Your message is ready. Copy it or open WhatsApp to send it directly to your Kasify listing inbox.
+                        </p>
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold text-gray-800 mb-2" for="listing-message">Listing message</label>
+                            <textarea id="listing-message" rows="8" readonly class="w-full rounded-2xl border border-gray-300 bg-gray-100 px-4 py-3 text-gray-700"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -657,7 +794,7 @@
                 <div>
                     <h3 class="font-bold text-white mb-4">For Sellers</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-emerald-400 transition">List Business</a></li>
+                        <li><a href="#list-business" class="hover:text-emerald-400 transition">List Business</a></li>
                         <li><a href="#" class="hover:text-emerald-400 transition">Seller Tools</a></li>
                         <li><a href="#" class="hover:text-emerald-400 transition">Pricing</a></li>
                     </ul>
@@ -681,5 +818,76 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        const brandRadios = document.querySelectorAll('input[name="brand-feel"]');
+        const customGroup = document.getElementById('brand-custom-group');
+        const customInput = document.getElementById('brand-feel-custom');
+        const prepareButton = document.getElementById('prepare-message');
+        const copyButton = document.getElementById('copy-message');
+        const whatsappButton = document.getElementById('open-whatsapp');
+        const messageTextarea = document.getElementById('listing-message');
+        const note = document.getElementById('message-note');
+
+        brandRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'custom' && radio.checked) {
+                    customGroup.classList.remove('hidden');
+                    customInput.focus();
+                } else if (radio.checked) {
+                    customGroup.classList.add('hidden');
+                }
+            });
+        });
+
+        function getSelectedBrandFeeling() {
+            const selected = document.querySelector('input[name="brand-feel"]:checked');
+            if (!selected) return '';
+            return selected.value === 'custom' ? customInput.value.trim() : selected.value;
+        }
+
+        function buildListingMessage() {
+            const name = document.getElementById('business-name').value.trim();
+            const category = document.getElementById('business-category').value.trim();
+            const location = document.getElementById('business-location').value.trim();
+            const contact = document.getElementById('business-contact').value.trim();
+            const description = document.getElementById('business-description').value.trim();
+            const feeling = getSelectedBrandFeeling();
+
+            if (!name || !category || !location || !contact || !description || !feeling) {
+                alert('Please fill in all fields and choose the feeling behind your brand.');
+                return null;
+            }
+
+            return `Kasify business submission:\n\nBusiness name: ${name}\nCategory: ${category}\nLocation: ${location}\nContact: ${contact}\nWhat I sell: ${description}\n\nFeeling behind the brand: ${feeling}\n\nPlease list my business on Kasify.`;
+        }
+
+        prepareButton.addEventListener('click', () => {
+            const message = buildListingMessage();
+            if (!message) return;
+            messageTextarea.value = message;
+            copyButton.disabled = false;
+            whatsappButton.disabled = false;
+            note.classList.remove('hidden');
+        });
+
+        copyButton.addEventListener('click', async () => {
+            const text = messageTextarea.value.trim();
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('Listing message copied to clipboard. You can paste it into WhatsApp or email.');
+            } catch (error) {
+                alert('Could not copy automatically. Please select the text and copy it manually.');
+            }
+        });
+
+        whatsappButton.addEventListener('click', () => {
+            const text = messageTextarea.value.trim();
+            if (!text) return;
+            const encoded = encodeURIComponent(text);
+            window.open(`https://wa.me/?text=${encoded}`, '_blank');
+        });
+    </script>
 </body>
 </html>
