@@ -1,0 +1,39 @@
+{
+  "name": "kasify-website",
+  "version": "1.0.0",
+  "description": "A modern, mobile-first marketplace for township businesses in North West Province, South Africa",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'No build step required - static HTML/CSS/JS only'",
+    "deploy": "gh-pages -d .",
+    "preview": "npx serve . --port 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/kasify-website.git"
+  },
+  "keywords": [
+    "township",
+    "business",
+    "directory",
+    "marketplace",
+    "south-africa",
+    "north-west",
+    "mobile-first",
+    "responsive"
+  ],
+  "author": "Kasify Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/kasify-website/issues"
+  },
+  "homepage": "https://your-username.github.io/kasify-website/",
+  "devDependencies": {
+    "gh-pages": "^6.0.0",
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

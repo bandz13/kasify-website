@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasify - Launch In Progress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #059669 0%, #fbbf24 100%); }
+        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white">
+    <div class="max-w-md mx-auto text-center p-8">
+        <div class="mb-8">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
+                <span class="text-3xl font-bold text-emerald-600">K</span>
+            </div>
+            <h1 class="text-3xl font-bold mb-4">Kasify Launch</h1>
+            <p class="text-white text-opacity-90 mb-6">
+                Township Business Directory for North West Province
+            </p>
+        </div>
+
+        <div class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">🚀 Deployment in Progress</h2>
+            <div class="space-y-3 text-left">
+                <div class="flex items-center">
+                    <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs mr-3">✓</span>
+                    <span>Website built and optimized</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs mr-3">✓</span>
+                    <span>GitHub repository prepared</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-xs mr-3 animate-pulse">⟳</span>
+                    <span>Waiting for GitHub deployment</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center text-xs mr-3">○</span>
+                    <span>Live website activation</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-sm text-white text-opacity-80">
+            <p class="mb-2">📍 Serving North West Province townships</p>
+            <p>💼 Connecting customers with local businesses</p>
+        </div>
+    </div>
+</body>
+</html>
