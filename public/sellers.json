@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "businessName": "Mama’s Kota",
+    "coverPhoto": "/images/kota.jpg",
+    "rating": 4.8,
+    "location": "Maquassi Hills",
+    "category": "Food & Restaurants",
+    "openNow": true,
+    "whatsappNumber": "27712345678"
+  },
+  {
+    "id": "2",
+    "businessName": "Beauty by Lerato",
+    "coverPhoto": "/images/beauty.jpg",
+    "rating": 4.5,
+    "location": "Johannesburg",
+    "category": "Hair & Beauty",
+    "openNow": false,
+    "whatsappNumber": "27798765432"
+  }
+]
